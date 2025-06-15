@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { type Note, type NoteTag, type NotesResponse } from '../types/note';
+import { type Note, type NoteTag } from '../types/note';
 
 const API_BASE = 'https://notehub-public.goit.study/api';
 const token = import.meta.env.VITE_NOTEHUB_TOKEN;
@@ -11,13 +11,11 @@ const axiosInstance = axios.create({
   },
 });
 
-
 export interface FetchNotesParams {
   page?: number;
   perPage?: number;
   search?: string;
 }
-
 
 export interface FetchNotesResponse {
   notes: Note[];
@@ -25,12 +23,11 @@ export interface FetchNotesResponse {
   totalNotes: number;
 }
 
-
 export async function fetchNotes({
   page = 1,
   perPage = 12,
   search = '',
-}: FetchNotesParams): Promise<NotesResponse> {
+}: FetchNotesParams): Promise<FetchNotesResponse> {
   const params: Record<string, string | number> = {
     page,
     perPage,
@@ -44,12 +41,8 @@ export async function fetchNotes({
     params,
   });
 
-  return {
-    notes: data.notes,
-    totalPages: data.totalPages,
-  };
+  return data;
 }
-
 
 export interface CreateNoteParams {
   title: string;
@@ -57,20 +50,17 @@ export interface CreateNoteParams {
   tag: NoteTag;
 }
 
-
 export async function createNote(params: CreateNoteParams): Promise<Note> {
   const { data } = await axiosInstance.post<Note>('/notes', params);
   return data;
 }
 
-// Відповідь при видаленні нотатки
 export interface DeleteNoteResponse {
   message: string;
   note: Note;
 }
 
-// Видалення нотатки
-export async function deleteNote(id: string): Promise<DeleteNoteResponse> {
+export async function deleteNote(id: number): Promise<DeleteNoteResponse> {
   const { data } = await axiosInstance.delete<DeleteNoteResponse>(`/notes/${id}`);
   return data;
 }

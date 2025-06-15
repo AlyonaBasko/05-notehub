@@ -1,5 +1,5 @@
 export interface Note {
-  _id: string;
+  id: number
   title: string;
   content?: string;
   tag: NoteTag;
@@ -8,12 +8,6 @@ export interface Note {
 }
 
 export type NoteTag = 'Todo' | 'Work' | 'Personal' | 'Meeting' | 'Shopping';
-
-export interface NotesResponse {
-  notes: Note[];
-  totalPages: number;
-}
-
 
 export interface FormValues {
   title: string;

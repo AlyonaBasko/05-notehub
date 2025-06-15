@@ -1,16 +1,14 @@
 import { useState } from 'react';
 import { useDebounce } from 'use-debounce';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery} from '@tanstack/react-query';
 
 import css from './App.module.css'; 
 import SearchBox from '../SearchBox/SearchBox';
 import NoteList from '../NoteList/NoteList';
 import Pagination from '../Pagination/Pagination';
 import NoteModal from '../NoteModal/NoteModal';
-import NoteForm from '../NoteForm/NoteForm';
-
-import { fetchNotes, createNote } from '../../services/noteService';
-import type { Note, FormValues } from '../../types/note';
+import { fetchNotes } from '../../services/noteService';
+import type { Note } from '../../types/note';
 
 interface NotesResponse {
   notes: Note[];
@@ -23,7 +21,6 @@ export default function App() {
   const [page, setPage] = useState(1);
   const [isModalOpen, setModalOpen] = useState(false);
 
-  const queryClient = useQueryClient();
 
   const { data, isLoading, isError } = useQuery<NotesResponse, Error>({
     queryKey: ['notes', { page, search: debouncedSearch }],
@@ -34,20 +31,17 @@ export default function App() {
   const notes = data?.notes ?? [];
   const totalPages = data?.totalPages ?? 0;
 
-  async function handleCreateNote(values: FormValues) {
-    try {
-      await createNote(values);
-      setModalOpen(false);
-      await queryClient.invalidateQueries({ queryKey: ['notes'] });
-    } catch (error) {
-      console.error('Error creating note:', error);
-    }
-  }
 
   return (
     <div className={css.app}>
       <header className={css.toolbar}>
-        <SearchBox value={search} onChange={setSearch} />
+        <SearchBox
+          value={search}
+          onChange={(value) => {
+            setSearch(value);
+            setPage(1); 
+          }}
+        />
         {totalPages > 1 && (
           <Pagination pageCount={totalPages} currentPage={page} onPageChange={setPage} />
         )}
@@ -62,9 +56,7 @@ export default function App() {
       {notes.length > 0 && <NoteList notes={notes} />}
 
       {isModalOpen && (
-        <NoteModal onClose={() => setModalOpen(false)}>
-          <NoteForm onCancel={() => setModalOpen(false)} onSubmit={handleCreateNote} />
-        </NoteModal>
+        <NoteModal onClose={() => setModalOpen(false)} />
       )}
     </div>
   );
