@@ -13,3 +13,10 @@ export interface NotesResponse {
   notes: Note[];
   totalPages: number;
 }
+
+
+export interface FormValues {
+  title: string;
+  content: string;
+  tag: NoteTag;
+}

@@ -1,12 +1,8 @@
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import css from './NoteForm.module.css';
+import { type FormValues } from '../../types/note';
 
-interface FormValues {
-  title: string;
-  content: string;
-  tag: 'Todo' | 'Work' | 'Personal' | 'Meeting' | 'Shopping';
-}
 
 interface NoteFormProps {
   onCancel: () => void;
